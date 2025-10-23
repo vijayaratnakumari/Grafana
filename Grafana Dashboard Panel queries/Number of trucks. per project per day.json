@@ -1,0 +1,554 @@
+{
+  "apiVersion": "dashboard.grafana.app/v1beta1",
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "ad5855g",
+    "namespace": "default",
+    "uid": "gVMLHkaOXZsYvCruNOIRigoX1Xi69LPn6F2C9gA2r0sX",
+    "resourceVersion": "13",
+    "generation": 13,
+    "creationTimestamp": "2025-10-14T09:47:36Z",
+    "labels": {
+      "grafana.app/deprecatedInternalID": "10"
+    },
+    "annotations": {
+      "grafana.app/createdBy": "user:dezxeiqnrz94wd",
+      "grafana.app/updatedBy": "user:dezxeiqnrz94wd",
+      "grafana.app/updatedTimestamp": "2025-10-22T09:35:01Z"
+    }
+  },
+  "spec": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 10,
+    "links": [],
+    "panels": [
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "eezxjf6xroum8b"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "fillOpacity": 80,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineWidth": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "id": 1,
+        "options": {
+          "barRadius": 0,
+          "barWidth": 0.97,
+          "fullHighlight": false,
+          "groupWidth": 0.7,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "orientation": "auto",
+          "showValue": "auto",
+          "stacking": "none",
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          },
+          "xTickLabelRotation": -60,
+          "xTickLabelSpacing": 0
+        },
+        "pluginVersion": "12.2.0",
+        "targets": [
+          {
+            "dataset": "etl_db",
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "eezxjf6xroum8b"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT\r\n    TO_CHAR(sub.month_start, 'Mon') AS month,\r\n    sub.project_name,\r\n    SUM(sub.truck_count) AS total_truck_allocation,\r\n    SUM(sub.trucks_allocated) AS total_trucks_allocated\r\nFROM (\r\n    SELECT\r\n        j.project_name,\r\n        tc.count AS truck_count,\r\n        tc.allocated AS trucks_allocated,\r\n        DATE_TRUNC('month', TO_TIMESTAMP(j.createdAt / 1000)) AS month_start\r\n    FROM jobs j\r\n    JOIN job_truck_categories tc\r\n        ON j.job_id = tc.job_id\r\n    WHERE\r\n        TO_TIMESTAMP(j.createdAt / 1000)::date >= DATE_TRUNC('year', CURRENT_DATE)\r\n        AND (\r\n            '$project_name' = 'All'\r\n            OR j.project_name ILIKE '%' || '$project_name' || '%'\r\n        )\r\n) sub\r\nGROUP BY sub.month_start, sub.project_name\r\nORDER BY sub.month_start, sub.project_name;\r\n",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          },
+          {
+            "dataset": "etl_db",
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "eezxjf6xroum8b"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": false,
+            "rawQuery": true,
+            "rawSql": "SELECT\r\n    to_char(to_timestamp(j.createdAt / 1000), 'YYYY-MM-DD') AS day,\r\n    j.project_name,\r\n    SUM(tc.count) AS total_truck_allocation,\r\n    SUM(tc.allocated) AS total_trucks_allocated\r\nFROM jobs j\r\nJOIN job_truck_categories tc\r\n    ON j.job_id = tc.job_id\r\nWHERE to_timestamp(j.createdAt / 1000)::date >= CURRENT_DATE - INTERVAL '30 days'\r\nGROUP BY day, j.project_name\r\nORDER BY day, j.project_name;\r\n",
+            "refId": "B",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "Aggregate data by day per project. (Yearly report)",
+        "type": "barchart"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "eezxjf6xroum8b"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "fillOpacity": 80,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineWidth": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        },
+        "id": 2,
+        "options": {
+          "barRadius": 0,
+          "barWidth": 0.97,
+          "fullHighlight": false,
+          "groupWidth": 0.7,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "orientation": "auto",
+          "showValue": "auto",
+          "stacking": "none",
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          },
+          "xTickLabelRotation": -45,
+          "xTickLabelSpacing": 0
+        },
+        "pluginVersion": "12.2.0",
+        "targets": [
+          {
+            "dataset": "etl_db",
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "eezxjf6xroum8b"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT DISTINCT\r\n    j.project_name,\r\n    j.name AS job_name,\r\n    tc.name AS truck_category,\r\n    tc.count AS truck_count,\r\n    tc.allocated AS trucks_allocated\r\nFROM jobs j\r\nJOIN job_truck_categories tc\r\n    ON j.job_id = tc.job_id\r\nWHERE to_timestamp(j.createdAt / 1000)::date = CURRENT_DATE\r\nORDER BY j.project_name, j.name, tc.name;\r\n",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "Daily Truck Allocation by Project and Job without filte.",
+        "type": "barchart"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "eezxjf6xroum8b"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "fillOpacity": 80,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineWidth": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 16
+        },
+        "id": 4,
+        "options": {
+          "barRadius": 0,
+          "barWidth": 0.97,
+          "fullHighlight": false,
+          "groupWidth": 0.7,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "orientation": "auto",
+          "showValue": "auto",
+          "stacking": "none",
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          },
+          "xTickLabelRotation": -45,
+          "xTickLabelSpacing": 0
+        },
+        "pluginVersion": "12.2.0",
+        "targets": [
+          {
+            "dataset": "etl_db",
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "eezxjf6xroum8b"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT DISTINCT\r\n    j.project_name,\r\n    j.name AS job_name,\r\n    tc.name AS truck_category,\r\n    tc.count AS truck_count,\r\n    tc.allocated AS trucks_allocated\r\nFROM jobs j\r\nJOIN job_truck_categories tc\r\n    ON j.job_id = tc.job_id\r\nWHERE to_timestamp(j.createdAt / 1000)::date >= date_trunc('week', CURRENT_DATE)\r\nORDER BY j.project_name, j.name, tc.name;",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "Weekly Report (current week, Monday–Sunday) without filter.",
+        "type": "barchart"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "eezxjf6xroum8b"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "fillOpacity": 80,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineWidth": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 24
+        },
+        "id": 3,
+        "options": {
+          "barRadius": 0,
+          "barWidth": 0.97,
+          "fullHighlight": false,
+          "groupWidth": 0.7,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "orientation": "auto",
+          "showValue": "auto",
+          "stacking": "none",
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          },
+          "xTickLabelRotation": -45,
+          "xTickLabelSpacing": 0
+        },
+        "pluginVersion": "12.2.0",
+        "targets": [
+          {
+            "dataset": "etl_db",
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "eezxjf6xroum8b"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT DISTINCT\r\n    to_char(to_timestamp(j.createdAt / 1000), 'YYYY-MM-DD') AS job_date,\r\n    j.project_name,\r\n    j.name AS job_name,\r\n    tc.name AS truck_category,\r\n    tc.count AS truck_count,\r\n    tc.allocated AS trucks_allocated\r\nFROM jobs j\r\nJOIN job_truck_categories tc\r\n    ON j.job_id = tc.job_id\r\nWHERE to_timestamp(j.createdAt / 1000)::date >= date_trunc('month', CURRENT_DATE)\r\nORDER BY job_date, j.project_name, j.name, tc.name;\r\n",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "Monthly Report (grouped by Current month, e.g., Oct, Sep…) without filter. ",
+        "type": "barchart"
+      }
+    ],
+    "preload": false,
+    "schemaVersion": 42,
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "text": "8273 Project ",
+            "value": "8273 Project "
+          },
+          "definition": "SELECT DISTINCT project_name\nFROM tickets\nWHERE ticket_status NOT IN ('NOT_STARTED', 'CANCELLED')\nORDER BY project_name;\n",
+          "name": "project_name",
+          "options": [],
+          "query": "SELECT DISTINCT project_name\nFROM tickets\nWHERE ticket_status NOT IN ('NOT_STARTED', 'CANCELLED')\nORDER BY project_name;\n",
+          "refresh": 1,
+          "regex": "",
+          "sort": 1,
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Number of trucks. per project per day",
+    "uid": "ad5855g",
+    "version": 13
+  },
+  "status": {}
+}
