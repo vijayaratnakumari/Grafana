@@ -1,186 +1,161 @@
-# Grafana
-This is for Grafana dashboard queries list. 
-
-You can directly pull and run it using:
-
-
-docker run -d --name=grafana --network ratna -p 3002:3000  -v grafana-storage:/var/lib/grafana grafana/grafana:latest
-docker stop grafana
-docker rm grafana
-Then reload PostgreSQL:
 # Grafana dashboards and ETL (MongoDB → PostgreSQL)
 
-This repository contains SQL schema, ETL code, and example Grafana queries for building dashboards that surface per-project daily statistics (loads, trucks, billable hours, cost, trips, and derived metrics).
-
-The goal is to provide a lightweight pipeline and Grafana-ready view that makes it simple to visualize operational KPIs per project by day.
+This repository contains schema, a lightweight ETL, and example Grafana queries to visualize per-project daily operational KPIs (loads, trucks, billable hours, cost, trips, and derived metrics).
 
 Contents
-- `postgres.sql` — DDL for the `projects`, `daily_stats`, and `etl_checkpoint` tables plus `daily_stats_view` and helpful indexes.
-- `project.py` — Small ETL script that reads trip documents from MongoDB, aggregates per project+day, and upserts into PostgreSQL.
-- `requirements.txt` — Python dependencies for the ETL.
-- Example Grafana queries and dashboard panel JSONs are included in the "Grafana Dashboard Panel queries" folder.
+- `postgres.sql` — DDL for `projects`, `daily_stats`, `etl_checkpoint`, `daily_stats_view`, and useful indexes.
+- `project.py` — ETL that reads MongoDB trip documents, aggregates per project+day, and upserts into Postgres.
+- `requirements.txt` — Python dependencies.
+- `Grafana Dashboard Panel queries/` — example panel JSONs and saved queries.
 
-Quick start (Docker Grafana)
+Quick start (Grafana with Docker)
+Run Grafana (persistent, restart-enabled):
 
-1. Run Grafana (example):
+```bash
+docker run -d \
+  --name grafana \
+  --restart=always \
+  --add-host=host.docker.internal:host-gateway \
+  -p 3002:3000 \
+  -v grafana-storage:/var/lib/grafana \
+  grafana/grafana:latest
+```
 
-   docker run -d --name grafana -p 3002:3000 -v grafana-storage:/var/lib/grafana grafana/grafana:latest
+PostgreSQL setup (example)
+Replace placeholders with secure values.
 
-2. Stop / remove:
+Install (Amazon Linux 2 example):
 
-   docker stop grafana; docker rm grafana
+```bash
+amazon-linux-extras list | grep postgresql
+sudo amazon-linux-extras enable postgresql14
+sudo yum clean metadata
+sudo yum install -y postgresql postgresql-server
+```
 
-3. Run with restart and host gateway mapping (optional):
+Initialize and start:
 
-   docker run -d --name grafana --restart=always --add-host=host.docker.internal:host-gateway -p 3002:3000 -v grafana-storage:/var/lib/grafana grafana/grafana:latest
+```bash
+sudo postgresql-setup --initdb
+sudo systemctl enable postgresql
+sudo systemctl start postgresql
+sudo systemctl status postgresql
+```
 
-PostgreSQL setup (example on Linux / EC2)
+Create DB and user (run as postgres system user):
 
-These are example commands and notes used while testing. Replace passwords, IPs, and usernames with secure values in your deployment.
+```bash
+sudo -i -u postgres psql
+CREATE DATABASE etl_db;
+CREATE USER etl_user WITH ENCRYPTED PASSWORD '<change-this-secure-password>';
+GRANT ALL PRIVILEGES ON DATABASE etl_db TO etl_user;
+\q
+```
 
-1. Install (Amazon Linux 2 example):
+Apply schema:
 
-   # list available PostgreSQL extras
-   amazon-linux-extras list | grep postgresql
-
-   # enable PostgreSQL 14 if available
-   sudo amazon-linux-extras enable postgresql14
-   sudo yum clean metadata
-   sudo yum install -y postgresql postgresql-server
-
-2. Initialize DB and start service:
-
-   sudo postgresql-setup --initdb
-   sudo systemctl enable postgresql
-   sudo systemctl start postgresql
-   sudo systemctl status postgresql
-
-3. Create DB / user (example):
-
-   sudo -i -u postgres psql
-   CREATE DATABASE etl_db;
-   CREATE USER etl_user WITH ENCRYPTED PASSWORD '<change-this-secure-password>';
-   GRANT ALL PRIVILEGES ON DATABASE etl_db TO etl_user;
-   \q
-
-4. Run the DDL to create schema:
-
-   psql -U etl_user -d etl_db -f "/path/to/postgres.sql"
+```bash
+psql -U etl_user -d etl_db -f "/path/to/postgres.sql"
+```
 
 Notes on authentication and remote access
-- If you get "Peer authentication failed" change the local authentication method in `pg_hba.conf` from `peer` to `md5` (or `scram-sha-256`) for the relevant user/connection type, then restart Postgres.
-- To allow TCP access, set `listen_addresses` in `postgresql.conf` (for example `'*'` or `localhost`) and add an appropriate `host ...` line to `pg_hba.conf` with `md5`/`scram-sha-256`.
-- After editing config files, restart with `sudo systemctl restart postgresql`.
+- If you see "Peer authentication failed", change the relevant method in `pg_hba.conf` from `peer` to `md5` or `scram-sha-256`, then restart Postgres.
+- To allow TCP access, set `listen_addresses` in `postgresql.conf` and add an appropriate `host ...` entry to `pg_hba.conf`. Restart Postgres after changes.
 
 ETL: project.py
-
 Overview:
-- Connects to MongoDB, queries trip documents since the last checkpoint (stored in `etl_checkpoint`), aggregates into per-project-per-day rows and upserts into `daily_stats`.
-- Use environment variables to configure connections:
-  - `MONGO_URI` (default: `mongodb://localhost:27017`)
-  - `MONGO_DB` (default: `haulr`)
-  - `MONGO_COLLECTION` (default: `trickets`)
-  - `PG_CONN` (Postgres connection string e.g. `postgresql://user:pass@host:5432/db`)
+- Connects to MongoDB, queries trip documents since the last checkpoint (stored in `etl_checkpoint`), aggregates per project+day, and upserts into `daily_stats`.
 
-Run locally or schedule:
+Environment variables:
+- `MONGO_URI` (default: `mongodb://localhost:27017`)
+- `MONGO_DB` (default: `haulr`)
+- `MONGO_COLLECTION` (default: `trickets`)
+- `PG_CONN` (Postgres connection string, e.g. `postgresql://user:pass@host:5432/db`)
 
-1. Install dependencies in a virtualenv (recommended):
+Run locally / schedule (Windows PowerShell example)
 
-   python -m venv .venv
-   .\.venv\Scripts\Activate.ps1
-   pip install -r requirements.txt
+Create and activate virtualenv and install dependencies:
 
-2. Test-run once:
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r requirements.txt
+```
 
-   python project.py
+Test-run:
 
-3. Schedule: run via cron, systemd timer, or a scheduler (Airflow, etc.). The script updates `etl_checkpoint` so it can be run incrementally.
+```powershell
+python3 project.py
+```
 
-Important: `project.py` assumes certain fields on the Mongo documents (start_time, end_time, cost, project_key, truck_id, load_id). If your schema differs, update the transform logic inside the script.
+Schedule: use cron, systemd timer, Airflow, or another scheduler. The script updates `etl_checkpoint` and can run incrementally.
+
+Important: `project.py` expects fields such as `start_time`, `end_time`, `cost`, `project_key`, `truck_id`, and `load_id`. Adjust transform logic if your Mongo schema differs.
 
 Grafana: connect to Postgres and build dashboards
-
-1. In Grafana add a PostgreSQL data source:
+1. Add a PostgreSQL data source in Grafana:
    - Host: <postgres_host>:5432
    - Database: `etl_db`
    - User: `etl_user`
-   - Password: your password
+   - Password: (enter securely)
+   - SSL Mode: configure for your environment
 
-2. Use the provided `daily_stats_view` for panels. Example queries:
+2. Use `daily_stats_view` for panels. Example queries below.
 
-   Table panel (core metrics):
+Table panel (core metrics) — SQL
+Use this query in a Table panel (replace `$project_key` or set a dashboard variable):
 
-   SELECT day, number_of_trucks, number_of_loads, billable_hours, cost_per_day, average_trips_per_hour, average_cost_per_trip
-   FROM daily_stats_view
-   WHERE project_key = '$project_key'
-   ORDER BY day DESC
-   LIMIT 100
+```sql
+SELECT
+  day,
+  number_of_trucks,
+  number_of_loads,
+  billable_hours,
+  cost_per_day,
+  average_trips_per_hour,
+  average_cost_per_trip
+FROM daily_stats_view
+WHERE project_key = '$project_key'
+ORDER BY day DESC
+LIMIT 100;
+```
 
-   Single stat / timeseries (average cost per trip):
+Timeseries / SingleStat (average cost per trip) — SQL
+Use this query in a Time series or SingleStat panel:
 
-   SELECT day, average_cost_per_trip
-   FROM daily_stats_view
-   WHERE project_key = 'project_abc'
-   ORDER BY day
+```sql
+SELECT
+  day,
+  average_cost_per_trip
+FROM daily_stats_view
+WHERE project_key = 'project_abc'
+ORDER BY day;
+```
 
-Troubleshooting & common fixes
-- ModuleNotFoundError: No module named 'pymongo' — install Python deps: `pip install -r requirements.txt`.
-- Peer authentication failed — edit `pg_hba.conf` and change `peer` → `md5` for the relevant entry, then restart Postgres.
-- Permission denied while running Postgres commands — some commands must be run as the `postgres` system user (via `sudo -i -u postgres`).
+Troubleshooting
+- ModuleNotFoundError: No module named `pymongo` — install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+- Permission errors for Postgres commands — run as the `postgres` system user:
+
+```bash
+sudo -i -u postgres
+```
+
+- Authentication issues — review `pg_hba.conf` and restart Postgres after changes.
 
 Security & operational notes
-- Never commit real passwords or secrets to the repository. Use environment variables or a secrets store (Vault, AWS Secrets Manager, etc.).
-- Use non-default passwords and restrict Postgres network access to trusted IPs only.
-- Consider using TLS for Postgres and Grafana in production.
+- Never commit secrets. Use environment variables or a secrets manager (Vault, AWS Secrets Manager).
+- Use strong passwords and restrict Postgres network access to trusted hosts.
+- Enable TLS/SSL for Postgres and Grafana in production and rotate admin credentials after initial login.
 
-Files and purpose
-- `postgres.sql` — schema & view used by Grafana dashboards.
-- `project.py` — ETL script (MongoDB → Postgres). Edit the transform function to match your source schema.
-- `requirements.txt` — Python packages required for the ETL.
-- `Grafana Dashboard Panel queries/` — example panel JSONs and saved queries to import into Grafana.
-
-Next steps (suggested enhancements)
-- Add unit tests for the ETL transform logic (small sample docs → expected aggregated rows).
-- Add a Dockerfile or systemd unit to run the ETL on a schedule.
-- Add example Grafana dashboard JSON (exported) for quick import.
-
-License
-- This repository is provided as-is. Choose an appropriate license for your project.
+AWS (example deployment summary)
+- Place Grafana behind an ALB with TLS termination. Restrict ALB ingress to trusted IPs or VPN.
+- Register EC2/Grafana targets on port 3002 and configure health checks.
+- Use Route 53 (or equivalent) to map a DNS name to the ALB.
 
 Contact / support
-- For questions about the schema or ETL logic, open an issue with example documents and expected results.
-
-AWS (example deployment)
-
-The following is an example pattern used to expose Grafana behind an AWS Application Load Balancer (ALB). Replace placeholder names, IPs and credentials with secure values and apply your organization's security controls.
-
-1. Create a Target Group
-   - Create a target group (e.g., bastion-tg) using the instance target type.
-   - Configure the health check to use the appropriate path/port for Grafana (e.g., HTTP / on port 3002).
-
-2. Configure the ALB and Route 53
-   - Create or select an ALB and add a listener (typically 80/443) that forwards to the bastion-tg.
-   - In Route 53, create a DNS record (e.g., dashboard.dev.sarithm.com) pointing to the ALB.
-
-3. Register targets
-   - Register the bastion (or EC2 instance running Grafana) with the target group and ensure it's reachable on port 3002.
-   - Confirm the ALB health checks show the instance as healthy.
-
-4. Verify access
-   - Browse to: https://dashboard.dev.sarithm.com (use HTTPS in production).
-   - Log in with the Grafana admin account and change the default password immediately.
-
-5. Update Grafana PostgreSQL data source
-   - In Grafana UI → Configuration → Data sources → PostgreSQL:
-     - Host: host.docker.internal:5432 (or your Postgres host)
-     - Database: etl_db
-     - User: etl_user
-     - Password: (enter securely)
-     - SSL Mode: disable (only for local/testing). For production, use require/verify-full and provide certificates.
-   - Click Save & Test and confirm a successful connection.
-
-Operational and security notes
-- Use HTTPS for the ALB listener and terminate TLS at the ALB or a reverse proxy — do not expose Grafana plaintext to the public internet.
-- Restrict ALB security group ingress to known IPs or VPNs where possible.
-- Do not store credentials in the repository; use environment variables or a secrets manager (AWS Secrets Manager, Parameter Store).
-- Consider enabling Grafana authentication providers (OAuth, SSO) and enforcing strong passwords for admin accounts.
+- For questions about schema or ETL logic, open an issue with sample documents and expected results.
