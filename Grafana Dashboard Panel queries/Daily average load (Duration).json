@@ -1,0 +1,829 @@
+{
+  "apiVersion": "dashboard.grafana.app/v1beta1",
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "adh6wnz",
+    "namespace": "default",
+    "uid": "Q770SBg28f0sBOesn4nRgkcZf8tehe74XaGHaoUgX5QX",
+    "resourceVersion": "26",
+    "generation": 26,
+    "creationTimestamp": "2025-10-03T12:45:26Z",
+    "labels": {
+      "grafana.app/deprecatedInternalID": "4"
+    },
+    "annotations": {
+      "grafana.app/createdBy": "user:dezxeiqnrz94wd",
+      "grafana.app/updatedBy": "user:dezxeiqnrz94wd",
+      "grafana.app/updatedTimestamp": "2025-10-22T17:35:24Z"
+    }
+  },
+  "spec": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 4,
+    "links": [],
+    "panels": [
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "eezxjf6xroum8b"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "fillOpacity": 80,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineWidth": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "id": 7,
+        "options": {
+          "barRadius": 0,
+          "barWidth": 0.97,
+          "fullHighlight": false,
+          "groupWidth": 0.7,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "orientation": "auto",
+          "showValue": "auto",
+          "stacking": "none",
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          },
+          "xTickLabelRotation": 0,
+          "xTickLabelSpacing": 0
+        },
+        "pluginVersion": "12.2.0",
+        "targets": [
+          {
+            "dataset": "etl_db",
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "eezxjf6xroum8b"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT\r\n    ticket_date::date AS day,\r\n    SUM(completed_trip_count) AS total_completed_trips\r\nFROM tickets\r\nWHERE completed_trip_count IS NOT NULL\r\n  AND ticket_date::date = CURRENT_DATE\r\nGROUP BY day\r\nORDER BY day;\r\n",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "Completed Trips per Day",
+        "type": "barchart"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "eezxjf6xroum8b"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "fillOpacity": 80,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineWidth": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "80+"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "dark-blue",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        },
+        "id": 2,
+        "options": {
+          "barRadius": 0,
+          "barWidth": 0.97,
+          "fullHighlight": false,
+          "groupWidth": 0.7,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "orientation": "auto",
+          "showValue": "auto",
+          "stacking": "none",
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          },
+          "xTickLabelRotation": -45,
+          "xTickLabelSpacing": 0
+        },
+        "pluginVersion": "12.2.0",
+        "targets": [
+          {
+            "dataset": "etl_db",
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "eezxjf6xroum8b"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT\r\n    driver_name,\r\n    SUM(completed_trip_count) AS total_trips,\r\n    \r\n    -- Total hours in HH:MM\r\n    CASE \r\n        WHEN SUM(total_time_minutes) IS NULL THEN '00:00'\r\n        ELSE\r\n            LPAD(FLOOR(SUM(total_time_minutes) / 60)::text, 2, '0')\r\n            || ':' ||\r\n            LPAD((SUM(total_time_minutes)::int % 60)::text, 2, '0')\r\n    END AS total_hours,\r\n    \r\n    -- Average trips per hour (still decimal)\r\n    ROUND(SUM(completed_trip_count) / NULLIF(SUM(total_time_minutes) / 60.0, 0), 2) AS avg_trips_per_hour,\r\n    \r\n    -- Average duration per trip in HH:MM\r\n    CASE \r\n        WHEN SUM(completed_trip_count) = 0 THEN '00:00'\r\n        ELSE\r\n            LPAD(FLOOR(SUM(total_time_minutes) / SUM(completed_trip_count) / 60)::text, 2, '0')\r\n            || ':' ||\r\n            LPAD((FLOOR(SUM(total_time_minutes) / SUM(completed_trip_count))::int % 60)::text, 2, '0')\r\n    END AS avg_duration_per_trip\r\n\r\nFROM tickets\r\nWHERE\r\n    ticket_status NOT IN ('NOT_STARTED', 'CANCELLED')\r\n    AND ticket_date::date = CURRENT_DATE\r\nGROUP BY driver_name\r\nORDER BY driver_name;\r\n",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "Driver-Level Today Panel (HH:MM Format). without filter.",
+        "type": "barchart"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "eezxjf6xroum8b"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "fillOpacity": 80,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineWidth": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "80+"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "dark-blue",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 16
+        },
+        "id": 5,
+        "options": {
+          "barRadius": 0,
+          "barWidth": 0.97,
+          "fullHighlight": false,
+          "groupWidth": 0.7,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "orientation": "auto",
+          "showValue": "auto",
+          "stacking": "none",
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          },
+          "xTickLabelRotation": -45,
+          "xTickLabelSpacing": 0
+        },
+        "pluginVersion": "12.2.0",
+        "targets": [
+          {
+            "dataset": "etl_db",
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "eezxjf6xroum8b"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "hide": false,
+            "rawQuery": true,
+            "rawSql": "SELECT\r\n    project_name,\r\n    SUM(completed_trip_count) AS total_trips,\r\n    \r\n    -- Average duration per trip in HH:MM\r\n    CASE \r\n        WHEN SUM(completed_trip_count) = 0 THEN '00:00'\r\n        ELSE\r\n            LPAD(FLOOR(SUM(total_time_minutes) / SUM(completed_trip_count) / 60)::text, 2, '0')\r\n            || ':' ||\r\n            LPAD((FLOOR(SUM(total_time_minutes) / SUM(completed_trip_count))::int % 60)::text, 2, '0')\r\n    END AS avg_duration_per_trip\r\n\r\nFROM tickets\r\nWHERE\r\n    ticket_status NOT IN ('NOT_STARTED', 'CANCELLED')\r\n    AND ticket_date::date = CURRENT_DATE\r\nGROUP BY project_name\r\nORDER BY project_name;\r\n",
+            "refId": "B",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "For today per project. ",
+        "type": "barchart"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "eezxjf6xroum8b"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "fillOpacity": 80,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineWidth": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "80+"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "dark-blue",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 24
+        },
+        "id": 3,
+        "options": {
+          "barRadius": 0,
+          "barWidth": 0.97,
+          "fullHighlight": false,
+          "groupWidth": 0.7,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "orientation": "auto",
+          "showValue": "auto",
+          "stacking": "none",
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          },
+          "xTickLabelRotation": -45,
+          "xTickLabelSpacing": 0
+        },
+        "pluginVersion": "12.2.0",
+        "targets": [
+          {
+            "dataset": "etl_db",
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "eezxjf6xroum8b"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT\r\n    ticket_date::date AS day_date,                                -- 📅 actual date\r\n    TO_CHAR(ticket_date::date, 'Dy, DD Mon YYYY') AS day_label,   -- 🏷 formatted day label\r\n    driver_name,\r\n    SUM(completed_trip_count) AS total_trips,                     -- total completed trips\r\n    ROUND(SUM(total_time_minutes) / 60.0, 2) AS total_hours,      -- total hours worked\r\n    ROUND(\r\n        SUM(completed_trip_count) / NULLIF(SUM(total_time_minutes) / 60.0, 0),\r\n        2\r\n    ) AS avg_trips_per_hour,                                      -- trips per hour\r\n    ROUND(\r\n        SUM(total_time_minutes) / NULLIF(SUM(completed_trip_count), 0),\r\n        2\r\n    ) AS avg_duration_minutes                                     -- avg duration per trip (minutes)\r\nFROM tickets\r\nWHERE\r\n    ticket_status NOT IN ('NOT_STARTED', 'CANCELLED')\r\n    AND ticket_date::date BETWEEN (CURRENT_DATE - INTERVAL '6 days') AND CURRENT_DATE  -- ✅ only last 7 days\r\nGROUP BY driver_name, ticket_date::date\r\nORDER BY day_date ASC, driver_name;                               -- ✅ ascending (Mon → Sun order)\r\n",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "For last 7 days",
+        "type": "barchart"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "eezxjf6xroum8b"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "fillOpacity": 80,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineWidth": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "80+"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "dark-blue",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 32
+        },
+        "id": 4,
+        "options": {
+          "barRadius": 0,
+          "barWidth": 0.97,
+          "fullHighlight": false,
+          "groupWidth": 0.7,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "orientation": "auto",
+          "showValue": "auto",
+          "stacking": "none",
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          },
+          "xTickLabelRotation": -45,
+          "xTickLabelSpacing": 0
+        },
+        "pluginVersion": "12.2.0",
+        "targets": [
+          {
+            "dataset": "etl_db",
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "eezxjf6xroum8b"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "-- ==============================================================  \r\n--  DAILY COMPLETED LOADS (MONTH-TO-DATE)  \r\n--  Time-series friendly output for Grafana  \r\n--  Author: Bujji & Vijaya 🌟  \r\n-- ==============================================================  \r\n\r\nWITH latest_date AS (\r\n    SELECT LEAST(MAX(ticket_date::date), CURRENT_DATE) AS last_date\r\n    FROM tickets\r\n    WHERE project_name ILIKE '%' || '${project_name}' || '%'  -- ✅ use Grafana variable\r\n),\r\ndays AS (\r\n    -- Generate one row per calendar day from month start to today\r\n    SELECT generate_series(DATE_TRUNC('month', last_date)::date, last_date::date, '1 day')::date AS day_date\r\n    FROM latest_date\r\n),\r\ndaily_agg AS (\r\n    -- Aggregate tickets per day and status\r\n    SELECT\r\n        ticket_date::date AS day_date,\r\n        project_name,                  -- ✅ show actual project name\r\n        ticket_status,\r\n        SUM(completed_trip_count) AS total_trips,\r\n        SUM(total_time_minutes) AS total_time_minutes\r\n    FROM tickets\r\n    WHERE\r\n        ticket_status NOT IN ('NOT_STARTED', 'CANCELLED')\r\n        AND project_name ILIKE '%' || '${project_name}' || '%'  -- ✅ filter dynamically\r\n    GROUP BY ticket_date::date, project_name, ticket_status\r\n)\r\nSELECT\r\n    d.day_date::timestamp AS \"time\",   -- Grafana time column\r\n    TO_CHAR(d.day_date, 'Dy, DD Mon YYYY') AS day_label,\r\n    a.project_name,                    -- ✅ actual project name\r\n    a.ticket_status,\r\n    COALESCE(a.total_trips, 0) AS total_trips,\r\n\r\n    -- Total hours in HH:MM format\r\n    CASE \r\n        WHEN a.total_time_minutes IS NULL THEN '00:00'\r\n        ELSE LPAD(FLOOR(a.total_time_minutes / 60)::text, 2, '0') \r\n             || ':' || LPAD((a.total_time_minutes::int % 60)::text, 2, '0')\r\n    END AS total_hours,\r\n\r\n    -- Average duration per trip in HH:MM\r\n    CASE \r\n        WHEN a.total_trips IS NULL OR a.total_trips = 0 THEN '00:00'\r\n        ELSE LPAD(FLOOR((a.total_time_minutes::float / a.total_trips) / 60)::text, 2, '0')\r\n             || ':' || LPAD((ROUND(a.total_time_minutes::float / a.total_trips)::int % 60)::text, 2, '0')\r\n    END AS avg_duration_per_trip\r\n\r\nFROM days d\r\nLEFT JOIN daily_agg a ON a.day_date = d.day_date\r\nORDER BY d.day_date ASC;\r\n",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "For Oct month from 1st to now. with filter.",
+        "type": "barchart"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "eezxjf6xroum8b"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "fillOpacity": 80,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineWidth": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": [
+            {
+              "matcher": {
+                "id": "byName",
+                "options": "80+"
+              },
+              "properties": [
+                {
+                  "id": "color",
+                  "value": {
+                    "fixedColor": "dark-blue",
+                    "mode": "fixed"
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 40
+        },
+        "id": 6,
+        "options": {
+          "barRadius": 0,
+          "barWidth": 0.97,
+          "fullHighlight": false,
+          "groupWidth": 0.7,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "orientation": "auto",
+          "showValue": "auto",
+          "stacking": "none",
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          },
+          "xTickLabelRotation": -45,
+          "xTickLabelSpacing": 0
+        },
+        "pluginVersion": "12.2.0",
+        "targets": [
+          {
+            "dataset": "etl_db",
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "eezxjf6xroum8b"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "WITH all_projects AS (\r\n    -- Get all project names, optionally filtered by Grafana variable\r\n    SELECT DISTINCT project_name\r\n    FROM tickets\r\n    WHERE project_name ILIKE '%' || '${project_name}' || '%'\r\n)\r\nSELECT\r\n    p.project_name,\r\n    t.ticket_status,\r\n    COALESCE(SUM(t.completed_trip_count),0) AS total_trips,\r\n\r\n    -- Average duration per trip in HH:MM\r\n    LPAD(FLOOR(COALESCE(SUM(t.total_time_minutes),0)::float / NULLIF(COALESCE(SUM(t.completed_trip_count),0),0) / 60)::text, 2, '0')\r\n    || ':' ||\r\n    LPAD((COALESCE(SUM(t.total_time_minutes),0)::int / NULLIF(COALESCE(SUM(t.completed_trip_count),0),0) % 60)::text, 2, '0')\r\n    AS avg_duration_per_trip\r\n\r\nFROM all_projects p\r\nLEFT JOIN tickets t\r\n    ON t.project_name = p.project_name\r\n    AND DATE_TRUNC('month', t.ticket_date) = DATE_TRUNC('month', CURRENT_DATE)\r\nGROUP BY p.project_name, t.ticket_status\r\nORDER BY p.project_name, t.ticket_status;\r\n",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "Project-Level Monthly Report with Filter (Show All Projects, HH:MM)",
+        "type": "barchart"
+      }
+    ],
+    "preload": false,
+    "schemaVersion": 42,
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "text": "1-70 Parkway Interchange. ",
+            "value": "1-70 Parkway Interchange. "
+          },
+          "definition": "SELECT DISTINCT\n    project_name\nFROM tickets\nWHERE ticket_status NOT IN ('NOT_STARTED', 'CANCELLED')\nORDER BY project_name;\n",
+          "name": "project_name",
+          "options": [],
+          "query": "SELECT DISTINCT\n    project_name\nFROM tickets\nWHERE ticket_status NOT IN ('NOT_STARTED', 'CANCELLED')\nORDER BY project_name;\n",
+          "refresh": 1,
+          "regex": "",
+          "sort": 1,
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-24h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "daily average load (Duration). Testing",
+    "uid": "adh6wnz",
+    "version": 26
+  },
+  "status": {}
+}
