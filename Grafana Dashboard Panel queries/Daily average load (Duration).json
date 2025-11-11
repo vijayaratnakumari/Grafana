@@ -5,8 +5,8 @@
     "name": "adh6wnz",
     "namespace": "default",
     "uid": "Q770SBg28f0sBOesn4nRgkcZf8tehe74XaGHaoUgX5QX",
-    "resourceVersion": "26",
-    "generation": 26,
+    "resourceVersion": "15",
+    "generation": 16,
     "creationTimestamp": "2025-10-03T12:45:26Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "4"
@@ -14,7 +14,8 @@
     "annotations": {
       "grafana.app/createdBy": "user:dezxeiqnrz94wd",
       "grafana.app/updatedBy": "user:dezxeiqnrz94wd",
-      "grafana.app/updatedTimestamp": "2025-10-22T17:35:24Z"
+      "grafana.app/updatedTimestamp": "2025-10-24T12:43:19Z",
+      "grafana.app/saved-from-ui": "Grafana v12.2.0 (92f1fba9b4)"
     }
   },
   "spec": {
@@ -37,7 +38,7 @@
     "editable": true,
     "fiscalYearStartMonth": 0,
     "graphTooltip": 0,
-    "id": 4,
+    "id": 0,
     "links": [],
     "panels": [
       {
@@ -128,7 +129,7 @@
             "editorMode": "code",
             "format": "table",
             "rawQuery": true,
-            "rawSql": "SELECT\r\n    ticket_date::date AS day,\r\n    SUM(completed_trip_count) AS total_completed_trips\r\nFROM tickets\r\nWHERE completed_trip_count IS NOT NULL\r\n  AND ticket_date::date = CURRENT_DATE\r\nGROUP BY day\r\nORDER BY day;\r\n",
+            "rawSql": "SELECT\r\n    ticket_date::date AS day,\r\n    SUM(completed_trip_count) AS total_completed_trips,\r\n    -- Total duration converted to HH:MM\r\n    COALESCE(\r\n        TO_CHAR(\r\n            INTERVAL '1 minute' * SUM(total_time_minutes),\r\n            'HH24:MI'\r\n        ),\r\n        '00:00'\r\n    ) AS total_hours,\r\n    -- Average duration per trip in HH:MM\r\n    COALESCE(\r\n        TO_CHAR(\r\n            INTERVAL '1 minute' * (SUM(total_time_minutes)::float / NULLIF(SUM(completed_trip_count), 0)),\r\n            'HH24:MI'\r\n        ),\r\n        '00:00'\r\n    ) AS avg_duration_per_trip\r\nFROM tickets\r\nWHERE completed_trip_count IS NOT NULL\r\n  AND ticket_date::date = CURRENT_DATE\r\nGROUP BY day\r\nORDER BY day;\r\n",
             "refId": "A",
             "sql": {
               "columns": [
@@ -149,7 +150,7 @@
             }
           }
         ],
-        "title": "Completed Trips per Day",
+        "title": "Total: Daily avg load duration per Trips without project filter.",
         "type": "barchart"
       },
       {
@@ -821,9 +822,9 @@
     },
     "timepicker": {},
     "timezone": "browser",
-    "title": "daily average load (Duration). Testing",
+    "title": "Daily average load (Duration).",
     "uid": "adh6wnz",
-    "version": 26
+    "version": 16
   },
   "status": {}
 }

@@ -1,0 +1,412 @@
+{
+  "apiVersion": "dashboard.grafana.app/v1beta1",
+  "kind": "Dashboard",
+  "metadata": {
+    "name": "ad824dp",
+    "namespace": "default",
+    "uid": "vpc85eMYsRxnoQMU8ncT1kcV70XZvzgAbYzKlvw4HR4X",
+    "resourceVersion": "5",
+    "generation": 5,
+    "creationTimestamp": "2025-11-05T08:22:29Z",
+    "labels": {
+      "grafana.app/deprecatedInternalID": "1"
+    },
+    "annotations": {
+      "grafana.app/createdBy": "user:cf331fo0timm8d",
+      "grafana.app/updatedBy": "user:cf331fo0timm8d",
+      "grafana.app/updatedTimestamp": "2025-11-06T09:42:26Z"
+    }
+  },
+  "spec": {
+    "annotations": {
+      "list": [
+        {
+          "builtIn": 1,
+          "datasource": {
+            "type": "grafana",
+            "uid": "-- Grafana --"
+          },
+          "enable": true,
+          "hide": true,
+          "iconColor": "rgba(0, 211, 255, 1)",
+          "name": "Annotations & Alerts",
+          "type": "dashboard"
+        }
+      ]
+    },
+    "editable": true,
+    "fiscalYearStartMonth": 0,
+    "graphTooltip": 0,
+    "id": 1,
+    "links": [],
+    "panels": [
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "af36sfoqooxkwf"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "fillOpacity": 80,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineWidth": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 0
+        },
+        "id": 1,
+        "options": {
+          "barRadius": 0,
+          "barWidth": 0.97,
+          "fullHighlight": false,
+          "groupWidth": 0.7,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "orientation": "auto",
+          "showValue": "auto",
+          "stacking": "none",
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          },
+          "xTickLabelRotation": -45,
+          "xTickLabelSpacing": 0
+        },
+        "pluginVersion": "12.2.1",
+        "targets": [
+          {
+            "dataset": "etl_db",
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "eezxjf6xroum8b"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT\r\n    project_name,\r\n    ticket_date::date AS day,\r\n    ROUND(SUM(total_cost), 2) AS total_billable_amount   -- sum of all tickets' total_cost\r\nFROM tickets\r\nWHERE\r\n    ticket_status = 'PAYMENT_PENDING'        -- only billable tickets\r\n    AND total_cost IS NOT NULL\r\n    AND ticket_date::date = CURRENT_DATE     -- only today\r\nGROUP BY project_name, ticket_date::date\r\nORDER BY project_name;\r\n",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "For today: SUM(total_cost) → adds up the total_cost of all tickets per project. without filter.",
+        "type": "barchart"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "af36sfoqooxkwf"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "fillOpacity": 80,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineWidth": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 8
+        },
+        "id": 2,
+        "options": {
+          "barRadius": 0,
+          "barWidth": 0.97,
+          "fullHighlight": false,
+          "groupWidth": 0.7,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "orientation": "auto",
+          "showValue": "auto",
+          "stacking": "none",
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          },
+          "xTickLabelRotation": -45,
+          "xTickLabelSpacing": 0
+        },
+        "pluginVersion": "12.2.1",
+        "targets": [
+          {
+            "dataset": "etl_db",
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "eezxjf6xroum8b"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT\r\n    project_name,\r\n    ticket_date::date AS day,\r\n    TO_CHAR(ticket_date::date, 'Dy, DD Mon YYYY') AS day_label,  -- day label for Grafana\r\n    ROUND(SUM(total_cost), 2) AS total_billable_amount\r\nFROM tickets\r\nWHERE\r\n    ticket_status = 'PAYMENT_PENDING'\r\n    AND total_cost IS NOT NULL\r\n    AND ticket_date::date BETWEEN DATE_TRUNC('week', CURRENT_DATE) AND CURRENT_DATE  -- Mon → Today\r\nGROUP BY project_name, ticket_date::date\r\nHAVING SUM(total_cost) > 0\r\nORDER BY ticket_date::date ASC, project_name;\r\n",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "Current Week Daily Billable Amount per Project without filter. (Mon-current date.)",
+        "type": "barchart"
+      },
+      {
+        "datasource": {
+          "type": "grafana-postgresql-datasource",
+          "uid": "af36sfoqooxkwf"
+        },
+        "fieldConfig": {
+          "defaults": {
+            "color": {
+              "mode": "thresholds"
+            },
+            "custom": {
+              "axisBorderShow": false,
+              "axisCenteredZero": false,
+              "axisColorMode": "text",
+              "axisLabel": "",
+              "axisPlacement": "auto",
+              "fillOpacity": 80,
+              "gradientMode": "none",
+              "hideFrom": {
+                "legend": false,
+                "tooltip": false,
+                "viz": false
+              },
+              "lineWidth": 1,
+              "scaleDistribution": {
+                "type": "linear"
+              },
+              "thresholdsStyle": {
+                "mode": "off"
+              }
+            },
+            "mappings": [],
+            "thresholds": {
+              "mode": "absolute",
+              "steps": [
+                {
+                  "color": "green",
+                  "value": 0
+                },
+                {
+                  "color": "red",
+                  "value": 80
+                }
+              ]
+            }
+          },
+          "overrides": []
+        },
+        "gridPos": {
+          "h": 8,
+          "w": 12,
+          "x": 0,
+          "y": 16
+        },
+        "id": 3,
+        "options": {
+          "barRadius": 0,
+          "barWidth": 0.97,
+          "fullHighlight": false,
+          "groupWidth": 0.7,
+          "legend": {
+            "calcs": [],
+            "displayMode": "list",
+            "placement": "bottom",
+            "showLegend": true
+          },
+          "orientation": "auto",
+          "showValue": "auto",
+          "stacking": "none",
+          "tooltip": {
+            "hideZeros": false,
+            "mode": "single",
+            "sort": "none"
+          },
+          "xTickLabelRotation": -45,
+          "xTickLabelSpacing": 0
+        },
+        "pluginVersion": "12.2.1",
+        "targets": [
+          {
+            "dataset": "etl_db",
+            "datasource": {
+              "type": "grafana-postgresql-datasource",
+              "uid": "eezxjf6xroum8b"
+            },
+            "editorMode": "code",
+            "format": "table",
+            "rawQuery": true,
+            "rawSql": "SELECT\r\n    project_name,\r\n    DATE_TRUNC('month', ticket_date)::date AS month_start,\r\n    ROUND(SUM(total_cost), 2) AS total_billable_amount   -- sum of all tickets' total_cost\r\nFROM tickets\r\nWHERE\r\n    ticket_status = 'PAYMENT_PENDING'                 -- only billable tickets\r\n    AND total_cost IS NOT NULL\r\n    AND ticket_date >= DATE_TRUNC('month', CURRENT_DATE)\r\n    AND project_name ILIKE '%' || '${project_name}' || '%'   -- Grafana variable filter\r\nGROUP BY project_name, DATE_TRUNC('month', ticket_date)\r\nHAVING SUM(total_cost) > 0\r\nORDER BY month_start ASC, project_name;\r\n",
+            "refId": "A",
+            "sql": {
+              "columns": [
+                {
+                  "parameters": [],
+                  "type": "function"
+                }
+              ],
+              "groupBy": [
+                {
+                  "property": {
+                    "type": "string"
+                  },
+                  "type": "groupBy"
+                }
+              ],
+              "limit": 50
+            }
+          }
+        ],
+        "title": "Current Month with filter by project name",
+        "type": "barchart"
+      }
+    ],
+    "preload": false,
+    "schemaVersion": 42,
+    "tags": [],
+    "templating": {
+      "list": [
+        {
+          "current": {
+            "text": "7-11",
+            "value": "7-11"
+          },
+          "definition": "SELECT DISTINCT\n    project_name\nFROM tickets\nWHERE ticket_status NOT IN ('NOT_STARTED', 'CANCELLED')\nORDER BY project_name;\n",
+          "name": "project_name",
+          "options": [],
+          "query": "SELECT DISTINCT\n    project_name\nFROM tickets\nWHERE ticket_status NOT IN ('NOT_STARTED', 'CANCELLED')\nORDER BY project_name;\n",
+          "refresh": 1,
+          "regex": "",
+          "sort": 1,
+          "type": "query"
+        }
+      ]
+    },
+    "time": {
+      "from": "now-6h",
+      "to": "now"
+    },
+    "timepicker": {},
+    "timezone": "browser",
+    "title": "Billable hours per project",
+    "uid": "ad824dp",
+    "version": 5
+  },
+  "status": {}
+}
