@@ -159,3 +159,5 @@ AWS (example deployment summary)
 
 Contact / support
 - For questions about schema or ETL logic, open an issue with sample documents and expected results.
+https://sarithm.atlassian.net/browse/HL-1259 
+

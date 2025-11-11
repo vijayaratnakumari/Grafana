@@ -1,0 +1,603 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 4,
+  "links": [],
+  "panels": [
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "af36sfoqooxkwf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": 0,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "dataset": "etl_db",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "eezxjf6xroum8b"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n    ticket_date::date AS day,\r\n    SUM(completed_trip_count) AS total_completed_trips\r\nFROM tickets\r\nWHERE completed_trip_count IS NOT NULL\r\n  AND ticket_date::date = CURRENT_DATE\r\nGROUP BY day\r\nORDER BY day;\r\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Completed Trips per Day without project filter.",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "af36sfoqooxkwf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 4,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": -45,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "dataset": "etl_db",
+          "datasource": {
+            "type": "grafana-postgresql-datasource",
+            "uid": "eezxjf6xroum8b"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n    ticket_date::date AS day,\r\n    TO_CHAR(ticket_date::date, 'Dy, DD Mon YYYY') AS day_label,  -- formatted day label\r\n    SUM(completed_trip_count) AS total_completed_trips\r\nFROM tickets\r\nWHERE completed_trip_count IS NOT NULL\r\n  AND ticket_date::date BETWEEN DATE_TRUNC('week', CURRENT_DATE) AND CURRENT_DATE  -- Monday → Today\r\nGROUP BY ticket_date::date\r\nORDER BY ticket_date::date ASC;\r\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Current Week Daily Total Loads with Day Label. without filter.",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "af36sfoqooxkwf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 16
+      },
+      "id": 2,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": -55,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "dataset": "etl_db",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n    ticket_date::date AS day,\r\n    TO_CHAR(ticket_date::date, 'Dy, DD Mon YYYY') AS day_label,  -- formatted day label\r\n    SUM(completed_trip_count) AS total_completed_trips\r\nFROM tickets\r\nWHERE completed_trip_count IS NOT NULL\r\n  AND ticket_date::date BETWEEN DATE_TRUNC('month', CURRENT_DATE) AND CURRENT_DATE  -- Month start → Today\r\nGROUP BY ticket_date::date\r\nORDER BY ticket_date::date ASC;\r\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Month-to-Date Daily Total Loads with Day Label. without filter.",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "af36sfoqooxkwf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 24
+      },
+      "id": 5,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": -55,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "dataset": "etl_db",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n    project_name,\r\n    ticket_status,\r\n\r\n    -- First and last ticket dates for this project & status\r\n    MIN(ticket_date::date) AS first_ticket_date,\r\n    MAX(ticket_date::date) AS last_ticket_date,\r\n\r\n    -- Today\r\n    SUM(CASE WHEN ticket_date::date = CURRENT_DATE\r\n        THEN COALESCE(completed_trip_count,0) ELSE 0 END) AS today_loads,\r\n\r\n    -- Last 7 Days (including today)\r\n    SUM(CASE WHEN ticket_date::date >= CURRENT_DATE - INTERVAL '6 days'\r\n        THEN COALESCE(completed_trip_count,0) ELSE 0 END) AS week_loads,\r\n\r\n    -- This Month\r\n    SUM(CASE WHEN DATE_TRUNC('month', ticket_date) = DATE_TRUNC('month', CURRENT_DATE)\r\n        THEN COALESCE(completed_trip_count,0) ELSE 0 END) AS month_loads\r\n\r\nFROM tickets\r\nWHERE project_name ILIKE '%' || '${project_name}' || '%'   -- Grafana variable filter\r\nGROUP BY project_name, ticket_status\r\nORDER BY project_name, ticket_status;\r\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Month-to-Date Daily Total Loads with Day Label. without filter.",
+      "type": "barchart"
+    },
+    {
+      "datasource": {
+        "type": "grafana-postgresql-datasource",
+        "uid": "af36sfoqooxkwf"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "lineWidth": 1,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": 0
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 32
+      },
+      "id": 3,
+      "options": {
+        "barRadius": 0,
+        "barWidth": 0.97,
+        "fullHighlight": false,
+        "groupWidth": 0.7,
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "orientation": "auto",
+        "showValue": "auto",
+        "stacking": "none",
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        },
+        "xTickLabelRotation": -55,
+        "xTickLabelSpacing": 0
+      },
+      "pluginVersion": "12.2.1",
+      "targets": [
+        {
+          "dataset": "etl_db",
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\r\n    project_name,\r\n    ticket_status,\r\n\r\n    -- First and last ticket dates for this project & status\r\n    MIN(ticket_date::date) AS first_ticket_date,\r\n    MAX(ticket_date::date) AS last_ticket_date,\r\n\r\n    -- Today\r\n    SUM(CASE WHEN ticket_date::date = CURRENT_DATE\r\n        THEN COALESCE(completed_trip_count,0) ELSE 0 END) AS today_loads,\r\n    -- Today hours in HH:MM\r\n    LPAD(FLOOR(SUM(CASE WHEN ticket_date::date = CURRENT_DATE\r\n        THEN COALESCE(total_time_minutes,0) ELSE 0 END) / 60)::text, 2, '0')\r\n    || ':' ||\r\n    LPAD((SUM(CASE WHEN ticket_date::date = CURRENT_DATE\r\n        THEN COALESCE(total_time_minutes,0) ELSE 0 END)::int % 60)::text, 2, '0')\r\n    AS today_hours,\r\n\r\n    -- Last 7 Days (including today)\r\n    SUM(CASE WHEN ticket_date::date >= CURRENT_DATE - INTERVAL '6 days'\r\n        THEN COALESCE(completed_trip_count,0) ELSE 0 END) AS week_loads,\r\n    -- Week hours in HH:MM\r\n    LPAD(FLOOR(SUM(CASE WHEN ticket_date::date >= CURRENT_DATE - INTERVAL '6 days'\r\n        THEN COALESCE(total_time_minutes,0) ELSE 0 END) / 60)::text, 2, '0')\r\n    || ':' ||\r\n    LPAD((SUM(CASE WHEN ticket_date::date >= CURRENT_DATE - INTERVAL '6 days'\r\n        THEN COALESCE(total_time_minutes,0) ELSE 0 END)::int % 60)::text, 2, '0')\r\n    AS week_hours,\r\n\r\n    -- This Month\r\n    SUM(CASE WHEN DATE_TRUNC('month', ticket_date) = DATE_TRUNC('month', CURRENT_DATE)\r\n        THEN COALESCE(completed_trip_count,0) ELSE 0 END) AS month_loads,\r\n    -- Month hours in HH:MM\r\n    LPAD(FLOOR(SUM(CASE WHEN DATE_TRUNC('month', ticket_date) = DATE_TRUNC('month', CURRENT_DATE)\r\n        THEN COALESCE(total_time_minutes,0) ELSE 0 END) / 60)::text, 2, '0')\r\n    || ':' ||\r\n    LPAD((SUM(CASE WHEN DATE_TRUNC('month', ticket_date) = DATE_TRUNC('month', CURRENT_DATE)\r\n        THEN COALESCE(total_time_minutes,0) ELSE 0 END)::int % 60)::text, 2, '0')\r\n    AS month_hours\r\n\r\nFROM tickets\r\nWHERE\r\n    completed_trip_count IS NOT NULL\r\n    AND project_name ILIKE '%' || '${project_name}' || '%'  -- Grafana variable filter\r\nGROUP BY project_name, ticket_status\r\nORDER BY project_name, ticket_status;\r\n",
+          "refId": "A",
+          "sql": {
+            "columns": [
+              {
+                "parameters": [],
+                "type": "function"
+              }
+            ],
+            "groupBy": [
+              {
+                "property": {
+                  "type": "string"
+                },
+                "type": "groupBy"
+              }
+            ],
+            "limit": 50
+          }
+        }
+      ],
+      "title": "Loads, Hours, and Ticket Date Range per Project",
+      "type": "barchart"
+    }
+  ],
+  "preload": false,
+  "schemaVersion": 42,
+  "tags": [],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "text": "7-11",
+          "value": "7-11"
+        },
+        "definition": "SELECT DISTINCT\n    project_name\nFROM tickets\nWHERE ticket_status NOT IN ('NOT_STARTED', 'CANCELLED')\nORDER BY project_name;\n",
+        "name": "project_name",
+        "options": [],
+        "query": "SELECT DISTINCT\n    project_name\nFROM tickets\nWHERE ticket_status NOT IN ('NOT_STARTED', 'CANCELLED')\nORDER BY project_name;\n",
+        "refresh": 1,
+        "regex": "",
+        "sort": 1,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-30m",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "No.of loads per day.",
+  "uid": "admbg5d",
+  "version": 10
+}
